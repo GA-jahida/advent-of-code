@@ -17,6 +17,7 @@ def get_sum_engine_schematic(lines):
 
 def is_adjacent_symbol(lines, line_index, char_index, number_length):
     for line in lines:
+        line = line.replace("\n", "")
         start = max(0, char_index - number_length - 1)
         for char in line[start: char_index + 1]:
             if not (char.isnumeric() or char == "."):
@@ -26,38 +27,51 @@ def is_adjacent_symbol(lines, line_index, char_index, number_length):
 def get_sum_product_gears(lines):
     sum_product_gears = 0
     for line_index, line in enumerate(lines):
-        line = line.replace("\n", "")
         current_number = ""
         for char_index, char in enumerate(line):
             if char == "*":
                 start = max(0, line_index - 1)
-                get_adjacent_numbers(lines[start : line_index + 2], line_index, char_index)
+                sum_product_gears += get_adjacent_numbers(lines[start : line_index + 2], line_index, char_index)
 
     return sum_product_gears
 
 
-def get_adjacent_numbers(lines, line_index, char_index):
+def get_adjacent_numbers(lines, line_index, gear_index):
     numbers_dict = {
-        0: [""]
+        0: {},
+        1: {},
+        2: {}
     }
     for line_index, line in enumerate(lines):
-        start = max(0, char_index - 1)
-        print(line[start: char_index + 2])
+        start = max(0, gear_index - 1)
         i = 0
-        numbers_dict[line_index] = [""]
-        for char in line[start: char_index + 2]:
-            if char.isnumeric():
-                counter = 0
-                print(char, line[char_index + counter - start + 1])
-                while line[char_index + counter].isnumeric() and len(line) - 1 >= char_index:
-                    numbers_dict[line_index][i] += char
-                    counter += 1
-            else:
-                numbers_dict[line_index].append("")
+        for char_index in range(start, gear_index + 2):
+            char = line[char_index]
+            if char.isdigit():
+                if i not in numbers_dict[line_index]:
+                    numbers_dict[line_index][i] = ""
+                numbers_dict[line_index][i] += char
+                if char_index == start + 2:
+                    count = 1
+                    while line[char_index + count].isdigit():
+                        numbers_dict[line_index][i] += line[char_index + count]
+                        count += 1
+                if char_index == start:
+                    count = 1
+                    while line[char_index - count].isdigit():
+                        numbers_dict[line_index][i] = line[char_index - count] + numbers_dict[line_index][i]
+                        count += 1
+            else: 
                 i += 1
-        
-        # print(numbers_dict)
-    return False
+
+    numbers_found = []
+    for key, line_dict in numbers_dict.items():
+        for key, number in line_dict.items():
+            if number.isdigit():
+               numbers_found.append(number)
+    if len(numbers_found) == 2:
+        return int(numbers_found[0]) * int(numbers_found[1])
+    return 0
 
 
 def part1(lines):
