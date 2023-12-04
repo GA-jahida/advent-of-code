@@ -20,7 +20,7 @@ def get_sum_winning_numbers(selected_numbers, winning_numbers):
     return sum_winning_numbers
 
 
-def get_sum_points_with_copies(lines):
+def get_sum_copies(lines):
     copy_array = [1 for x in range(len(lines))]
     for line_index, line in enumerate(lines):
         card = line.split(":")[1].replace("\n", "").split("|")
@@ -40,7 +40,7 @@ def part1(lines):
 
 
 def part2(lines):
-    return get_sum_points_with_copies(lines)
+    return get_sum_copies(lines)
 
 
 lines = open("./inputs/day4-input.txt", "r").readlines()
