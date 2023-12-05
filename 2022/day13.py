@@ -1,29 +1,43 @@
-def parse_input(lines):
-    for line in lines:
-        line = line.replace("\n", "")
-        packet = []
-        print(line, '----------------------------------------------')
-        a = parse_line(line[1::], packet)
-        print(a)
+import ast
 
-def parse_line(line, packet, depth=-1):
-    for index, char in enumerate(line):
-        match char:
-            case "[":
-                packet.append([])
-                packet.append(parse_line(line[index + 1::], packet[depth + 1]))
-                print(packet)
-            case ",":
-                continue
-            case "]":
-                continue
-            case _:
-                packet.append(char)
-    return packet
 
+def get_sum_pairs(lines):
+    sum_pairs = 0
+    for i in range(0, len(lines) - 1, 3):
+        left = ast.literal_eval(lines[i].replace("\n",""))
+        right = ast.literal_eval(lines[i+1].replace("\n",""))
+        a = is_right_order(left, right)
+        if a == 1:
+            sum_pairs += (i//3) + 1
+    return sum_pairs
+
+def is_right_order(left, right):
+    if isinstance(left, int) and isinstance(right, int):
+        if left < right: 
+            return 1
+        elif left > right:
+            return -1
+        else:
+            return 0
+    if isinstance(left, list) and isinstance(right, list):
+        for index, value in enumerate(left):
+            if index < len(right):
+                x = is_right_order(value, right[index])
+                if not x == 0:
+                    return x
+            if index == len(right):
+                return -1
+        if len(left) == len(right):
+            return 0
+        return 1
+    if isinstance(left, list):
+        return is_right_order(left, [right])
+    if isinstance(right, list):
+        return is_right_order([left], right)    
+        
 
 def part1(lines):
-    parse_input(lines)
+    return get_sum_pairs(lines)
 
 
 def part2():
