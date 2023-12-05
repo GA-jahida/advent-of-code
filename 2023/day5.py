@@ -61,15 +61,14 @@ def part2(lines):
     start_array = [3, 7, 12, 18, 22, 27, 31]
     start_array = [3, 20, 35, 68, 92, 127, 173]
     seed_ranges = lines[0].replace("seeds: ", "").strip().split(" ")
-    seeds = []
+    min_location = None
     for i in range(0, len(seed_ranges), 2):
-        # seeds.append(int(seed_ranges[i]))
-        # seeds.append(int(seed_ranges[i]) + int(seed_ranges[i+1]))
-        # seeds.append(int(seed_ranges[i]) + int(seed_ranges[i+1]) - 1)
-        # seeds.append((int(seed_ranges[i]) + int(seed_ranges[i+1]))//2)
+        seeds = []
         for j in range(int(seed_ranges[i]), int(seed_ranges[i]) + int(seed_ranges[i+1])):
             seeds.append(j)
-    # print(seeds)
+        min_current = get_min_location(lines, start_array, seeds)
+        if min_location is None or min_current < min_location:
+            min_location = min_current
     return get_min_location(lines, start_array, seeds)
 
 lines = open("./inputs/day5-input.txt", "r").readlines()
