@@ -1,31 +1,32 @@
-def get_sum_extrapolated_values(lines):
+def get_sum_extrapolated_values(lines, reverse):
+    sum_extrapolated_values = 0
     for line in lines:
         sequence = line.strip().split(" ")
+        if reverse:
+            sequence.reverse()
         sequence = [int(x) for x in sequence]
-        diff = get_diff_sequence(sequence)
-        print(diff)
+        sum_extrapolated_values += get_diff_sequence(sequence)
+    return sum_extrapolated_values
 
 
 def get_diff_sequence(sequence):
-    print(sequence)
     difference = []
-    for index in range (0, len(sequence) - 1):
+    for index in range(0, len(sequence) - 1):
         diff = sequence[index + 1] - sequence[index]
         difference.append(diff)
-
     if len(set(difference)) == 1:
-        return difference[0]
-    else:
-        updated_sequence = sequence.append(sequence[-1] + get_diff_sequence(difference))
-    
-    return updated_sequence[-1]
+        return sequence[-1] + difference[0]
+
+    return sequence[-1] + get_diff_sequence(difference)
+
 
 def part1(lines):
-   return get_sum_extrapolated_values(lines)
+    return get_sum_extrapolated_values(lines, False)
 
 
 def part2(lines):
-    return
+    return get_sum_extrapolated_values(lines, True)
+
 
 lines = open("./inputs/day9-input.txt", "r").readlines()
 print("Q1:", part1(lines))
