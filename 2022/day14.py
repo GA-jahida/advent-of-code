@@ -1,5 +1,5 @@
 import sys
-sys.setrecursionlimit(100000)
+sys.setrecursionlimit(10000000)
 def get_rock_matrix(lines):
     min_right = None
     max_right = None
@@ -34,8 +34,6 @@ def get_rock_matrix(lines):
     return matrix, min_right
 
 def get_sand_matrix(rock_matrix, sand_position, min_right, sum_sand):
-    # print(rock_matrix)
-    # print(sand_position)
     if sand_position[0] + 1 < len(rock_matrix) and sand_position[1] + 1 < len(rock_matrix[0]) and sand_position[1] - 1 >= 0:
         if rock_matrix[sand_position[0] + 1][sand_position[1]] == 0:
             sand_position = [sand_position[0] + 1, sand_position[1]]
@@ -52,14 +50,45 @@ def get_sand_matrix(rock_matrix, sand_position, min_right, sum_sand):
             return get_sand_matrix(rock_matrix, [0, 500 - min_right], min_right, sum_sand)
     return rock_matrix, sum_sand
 
+def get_sand_matrix_2(rock_matrix, sand_position, min_right, sum_sand):
+    if rock_matrix[0][500 - min_right] != 2:
+        if  sand_position[1] + 1 < len(rock_matrix[0]) and sand_position[1] - 1 >= 0:  
+            if rock_matrix[sand_position[0] + 1][sand_position[1]] == 0:
+                sand_position = [sand_position[0] + 1, sand_position[1]]
+                return get_sand_matrix_2(rock_matrix, sand_position, min_right, sum_sand)
+            elif rock_matrix[sand_position[0] + 1][sand_position[1] - 1] == 0:
+                sand_position = [sand_position[0] + 1, sand_position[1] - 1]
+                return get_sand_matrix_2(rock_matrix, sand_position, min_right, sum_sand)
+            elif rock_matrix[sand_position[0] + 1][sand_position[1] + 1] == 0:
+                sand_position = [sand_position[0] + 1, sand_position[1] + 1]
+                return get_sand_matrix_2(rock_matrix, sand_position, min_right, sum_sand)
+            else:
+                sum_sand += 1
+                rock_matrix[sand_position[0]][sand_position[1]] = 2
+                return get_sand_matrix_2(rock_matrix, [0, 500 - min_right], min_right, sum_sand)
+        else:
+            for index, row in enumerate(rock_matrix):
+                if index == len(rock_matrix) - 1:
+                    row.append(1)
+                    row.insert(0, 1)
+                else:
+                    row.append(0)
+                    row.insert(0, 0)
+            return get_sand_matrix_2(rock_matrix, [0, 500 - min_right + 1], min_right - 1, sum_sand)
+    return rock_matrix, sum_sand
+
 def part1(lines):
     rock_matrix, min_right = get_rock_matrix(lines)
-    fianl_matrix, sum_sand = get_sand_matrix(rock_matrix, [0, 500 - min_right], min_right, 0)
+    final_matrix, sum_sand = get_sand_matrix(rock_matrix, [0, 500 - min_right], min_right, 0)
     return sum_sand
 
 
 def part2(lines):
-    return 
+    rock_matrix, min_right = get_rock_matrix(lines)
+    rock_matrix.append([0 for x in rock_matrix[0]])
+    rock_matrix.append([1 for x in rock_matrix[0]])
+    final_matrix, sum_sand = get_sand_matrix_2(rock_matrix, [0, 500 - min_right], min_right, 0)
+    return sum_sand
 
 lines = open("./inputs/day14-input.txt", "r").readlines()
 print("Q1:", part1(lines))
