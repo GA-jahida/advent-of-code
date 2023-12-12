@@ -52,16 +52,23 @@ def rearrange(conditions_list, spring_groups):
 def replace_question_marks(string, hashtags_count):
     current_hashtag_count = string.count('#')
     indices = [index for index, char in enumerate(string) if char == '?']
-    combinations_indices = list(combinations(indices, hashtags_count - current_hashtag_count))
     combinations_list = []
-    for combination in combinations_indices:
-        new_string = string
-        for index in combination:
-            new_string = new_string[:index] + '#' + new_string[index + 1:]
-        for i, char in enumerate(new_string):
-            if char == '?':
-                new_string = new_string[:i] + '.' + new_string[i + 1:]
-        combinations_list.append(new_string)
+    
+    stack = [(list(indices), [], 0)]
+    while stack:
+        remaining_indices, chosen, start_idx = stack.pop()
+        if len(chosen) == hashtags_count - current_hashtag_count:
+            new_string = string
+            for index in chosen:
+                new_string = new_string[:remaining_indices[index]] + '#' + new_string[remaining_indices[index] + 1:]
+            for i, char in enumerate(new_string):
+                if char == '?':
+                    new_string = new_string[:i] + '.' + new_string[i + 1:]
+            combinations_list.append(new_string)
+        else:
+            for i in range(start_idx, len(remaining_indices)):
+                stack.append((remaining_indices, chosen + [i], i + 1))
+
     return combinations_list
 
 
