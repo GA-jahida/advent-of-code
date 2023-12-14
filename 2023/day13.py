@@ -29,15 +29,15 @@ def get_summary(rows, cols):
 def check_reflection(pattern):
     for index in range(len(pattern) - 1):
         if pattern[index] == pattern[index + 1]:
-            difference = 1
+            counter = 1
             if index == 0 or index + 1 == len(pattern) - 1:
                 return index + 1
-            while index - difference >= 0 and index + difference + 1 < len(pattern):
-                if pattern[index - difference] != pattern[index + difference + 1]:
+            while index - counter >= 0 and index + counter + 1 < len(pattern):
+                if pattern[index - counter] != pattern[index + counter + 1]:
                     break
-                if index - difference == 0 or index + difference + 1 == len(pattern) - 1:
+                if index - counter == 0 or index + counter + 1 == len(pattern) - 1:
                     return index + 1
-                difference += 1
+                counter += 1
     return 0
 
 def get_summary_difference(rows, cols):
@@ -56,14 +56,14 @@ def check_reflection_difference(pattern):
             if pattern[index][i] != pattern[index + 1][i]:
                 required_smudges += 1
         if required_smudges <= 1:
-            difference = 1
-            while index - difference >= 0 and index + difference + 1 < len(pattern):
-                for i in range(len(pattern[index - difference])):
-                    if pattern[index - difference][i] != pattern[index + difference + 1][i]:
+            counter = 1
+            while index - counter >= 0 and index + counter + 1 < len(pattern):
+                for i in range(len(pattern[index - counter])):
+                    if pattern[index - counter][i] != pattern[index + counter + 1][i]:
                         required_smudges += 1
-                if required_smudges == 1 and (index - difference == 0 or index + difference + 1 == len(pattern) - 1):
+                if required_smudges == 1 and (index - counter == 0 or index + counter + 1 == len(pattern) - 1):
                     return index + 1
-                difference += 1
+                counter += 1
             if (index == 0 or index + 1 == len(pattern) - 1) and required_smudges == 1:
                 return index + 1
     return 0
