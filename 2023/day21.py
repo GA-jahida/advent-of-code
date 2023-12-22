@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from collections import deque
 from functools import cache
 import asyncio
+from scipy.interpolate import lagrange
+from numpy.polynomial.polynomial import Polynomial
+from math import ceil
 
 
 directions =  [
@@ -42,7 +45,7 @@ def bfs_shortest_path(grid, start, max_steps):
     return None
 
 
-async def bfs_shortest_path_infinite(grid, start, max_steps, queue):
+def bfs_shortest_path_infinite(grid, start, max_steps, queue):
     visited = set([start, 0])
     while queue:
         current_node, distance, coordinate = queue.popleft()
@@ -77,17 +80,33 @@ def part1(lines):
     return bfs_shortest_path(grid, start, 6)
 
 
-async def part2(lines):
+def part2(lines, steps):
     grid, start = parse(lines)
     queue = deque([(start, 0, start)])
-    terms = []
-    for i in range(0, 151, 1):
-        queue = bfs_shortest_path_infinite(grid, start, i, queue)
-        print(i, len(queue))
-        terms.append(len(queue))
-    print(terms)
-    model = get_model(terms)
-    return model(26501365)
+    m = steps % len(grid)
+    queue =  bfs_shortest_path_infinite(grid, start, m, queue)
+    a0 = len(queue)
+    queue = bfs_shortest_path_infinite(grid, start, m + len(grid), queue)
+    a1 = len(queue)
+    queue = bfs_shortest_path_infinite(grid, start, m + 2 * len(grid), queue)
+    a2 = len(queue)
+
+    model = get_model([a0, a1, a2])
+    print(model(ceil(26501365 / len(grid))))
+
+    quadratic_func = quadratic(a0, a1, a2)
+    return quadratic_func(ceil(26501365 / len(grid)))
+
+
+def quadratic(a0, a1, a2):
+    first_diff = a1 - a0
+    second_diff = a2 - a1
+    third_diff = second_diff - first_diff
+
+    A = third_diff // 2
+    B = first_diff - 3 * A
+    C = a0 - B - A
+    return lambda n: A*n**2 + B*n + C
 
 
 def get_model(terms):
@@ -96,6 +115,12 @@ def get_model(terms):
     return model
 
 
+def run_lagrange(terms, n):
+    x = [i for i in range(len(terms))]
+    poly = lagrange(x, terms)
+    return poly(n)
+
+
 lines = open("./inputs/day21-input.txt", "r").readlines()
 print("Q1:", part1(lines)) # 3574
-print("Q2:", asyncio.run(part2(lines))) # 600090522932119
+print("Q2:", part2(lines)) # 600090522932119
