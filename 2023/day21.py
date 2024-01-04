@@ -1,9 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from collections import deque
 from functools import cache
 import asyncio
-from scipy.interpolate import lagrange
 from numpy.polynomial.polynomial import Polynomial
 from math import ceil
 
@@ -92,10 +90,10 @@ def part2(lines, steps):
     a2 = len(queue)
 
     model = get_model([a0, a1, a2])
-    print(model(ceil(26501365 / len(grid))))
+    print(model(ceil(steps / len(grid))))
 
     quadratic_func = quadratic(a0, a1, a2)
-    return quadratic_func(ceil(26501365 / len(grid)))
+    return quadratic_func(ceil(steps / len(grid)))
 
 
 def quadratic(a0, a1, a2):
@@ -115,12 +113,6 @@ def get_model(terms):
     return model
 
 
-def run_lagrange(terms, n):
-    x = [i for i in range(len(terms))]
-    poly = lagrange(x, terms)
-    return poly(n)
-
-
 lines = open("./inputs/day21-input.txt", "r").readlines()
-print("Q1:", part1(lines)) # 3574
-print("Q2:", part2(lines)) # 600090522932119
+print("Q1:", part1(lines))
+print("Q2:", part2(lines, 26501365))
