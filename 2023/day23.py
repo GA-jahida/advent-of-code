@@ -15,16 +15,26 @@ def parse_2(lines):
     grid = [[x for x in line[1:len(line)-1]] for line in lines]
     for i, line in enumerate(lines):
         for j, char in enumerate(line):
-            graph[(i, j)] = []
-            if i + 1 < len(lines) and lines[i+1][j] == '.':
-                graph[(i, j)].append((i+1, j))
-            if i - 1 >= 0 and lines[i-1][j] == '.':
-                graph[(i, j)].append((i-1, j))
-            if j + 1 < len(line) and lines[i][j+1] == '.':
-                graph[(i, j)].append((i, j+1))
-            if j - 1 >= 0 and lines[i][j-1] == '.':
-                graph[(i, j)].append((i, j-1))
+            if char == '.':
+                graph[(i, j)] = ([], 1)
+                if i + 1 < len(lines) and lines[i+1][j] == '.':
+                    graph[(i, j)][0].append((i+1, j))
+                if i - 1 >= 0 and lines[i-1][j] == '.':
+                    graph[(i, j)][0].append((i-1, j))
+                if j + 1 < len(line) and lines[i][j+1] == '.':
+                    graph[(i, j)][0].append((i, j+1))
+                if j - 1 >= 0 and lines[i][j-1] == '.':
+                    graph[(i, j)][0].append((i, j-1))
     return graph
+
+
+# def reduce_graph(graph):
+#     for node in graph:
+#         neighbours = graph[node]
+#         for neighbour in neighbours:
+
+#         to_remove = []
+#         while len(graph[current]) <= 2:
 
 
 def dfs(grid, start, end):
@@ -73,10 +83,10 @@ def dfs_graph(graph, start, end):
         x, y = node
         if node == end and -steps > max_steps:
             max_steps = -steps
-            print(max_steps - 1)
+            print(max_steps)
             max_path = path
         else:
-            for neighbour in graph[node]:
+            for neighbour in graph[node][0]:
                 if neighbour not in path:
                     heapq.heappush(queue, (steps - 1, neighbour, path + [neighbour]))
     return max_steps, max_path
@@ -95,8 +105,9 @@ def part1(lines):
 
 def part2(lines):
     graph = parse_2(lines)
-    max_steps, path = dfs_graph(graph, (0,0), (len(lines) - 1, len(lines[0]) - 2))
-    return max_steps - 1
+    max_steps, path = dfs_graph(graph, (0,1), (len(lines) - 1, len(lines[0]) - 2))
+    print(graph)
+    return max_steps 
 
 lines = open("./inputs/day23-input.txt", "r").readlines()
 print("Q1:", part1(lines))
