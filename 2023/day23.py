@@ -2,26 +2,27 @@ import heapq
 import copy
 
 def parse(lines):
-    grid = [[x for x in line.replace("\n", "").strip()] for line in lines]
+    for i, line in enumerate(lines):
+        lines[i] = line.replace("\n", "").strip()
+    grid = [[x for x in line[1:len(line)-1]] for line in lines]
     return grid
 
 
 def parse_2(lines):
     for i, line in enumerate(lines):
-        lines[i] = line.replace('>', '.').replace('<', '.').replace('^', '.').replace('v', '.')
-    grid = [[x for x in line.replace("\n", "").strip()] for line in lines]
+        lines[i] = line.replace('>', '.').replace('<', '.').replace('^', '.').replace('v', '.').replace("\n", "").strip()
+    grid = [[x for x in line[1:len(line)-1]]for line in lines]
     return grid
 
 
-def dfs(grid, start):
+def dfs(grid, start, end):
     queue = [(0, start, [start])]
     max_steps = 0
     max_path = []
-    visited = [start]
     while queue:
         steps, node, path = heapq.heappop(queue)
         x, y = node
-        if x == len(grid) - 1 and grid[x][y] == '.' and -steps > max_steps:
+        if node == end and -steps > max_steps:
             max_steps = -steps
             max_path = path
         else:
@@ -59,13 +60,13 @@ def visualise(path, grid):
 
 def part1(lines):
     grid = parse(lines)
-    max_steps, path = dfs(grid, (0,1))
+    max_steps, path = dfs(grid, (0,0), (len(grid) - 1, len(grid[0]) - 1))
     return max_steps
 
 
 def part2(lines):
     grid = parse_2(lines)
-    max_steps, path = dfs(grid, (0,1))
+    max_steps, path = dfs(grid, (0,0), (len(grid) - 1, len(grid[0]) - 1))
     return max_steps
 
 lines = open("./inputs/day23-input.txt", "r").readlines()
